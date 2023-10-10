@@ -1,0 +1,41 @@
+class Question2()
+    method mapper(_,line):
+        words = line.split(" ")
+        for word in words:
+            yield word,1
+
+    method combiner(self, word, counts):
+         yield word,sum(counts)
+
+    method reducer_init():
+        self.top_k_list = []
+
+    method reducer(word, counts):
+        total_counts = sum(counts)
+        if len(self.top_k_list) <= k:
+            self.top_k_list.append((word,total_counts))
+        else:
+            # assume we can find the word in top_k_list with minimal occurrence by function min_occurrence()
+            if total_counts > min_occurrence(self.top_k_list):
+
+                # replace the word in top-k_list with minimal occurrence with current word and its occurrence
+                replace(self.top_k_list, (word, total_counts))
+
+      method reducer_final():
+        // we sort by count first, then sort by term
+        top_k_list = self.top_k_list.sort(lambda x => x[1],x[0])
+        for i in top_k_list:
+            word = i[0]
+            counts = i[1]
+            emit (word, counts)
+
+     job_step { mapper ,combiner ,reducer_init,reducer,reducer_final}
+
+     conf = {
+        'mapreduce.map.output.key.field.separator': ' ',
+        'mapreduce.partition.keypartitioner.options': '-k1,1',
+        'partitioner': 'org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner',
+        'mapreduce.job.output.key.comparator.class': 'org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator',
+        'mapreduce.partition.keycomparator.options': '-k1,1'
+     }
+

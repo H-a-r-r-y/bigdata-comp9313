@@ -1,0 +1,46 @@
+
+
+def mapper(_,line):
+    line = line.split(" ")
+    docID = line[0]
+    terms = line[1:]
+
+    tf = {}
+
+    for i in range(len(terms)):
+        if terms[i] in tf:
+            tf[terms[i]] += 1
+        else:
+            yield term+","+str(-1), 1
+
+    for term in tf:
+        yield term+","+docID, tf[term]
+
+
+
+
+
+def reducer_init():
+    self.marginal = 0
+
+
+def reducer(key, value):
+    term = key.split(",")[0]
+    docID = key.split(",")[1]
+
+    if docId == "-1":
+        self.marginal = sum(value)
+    else:
+        value = sum(value) // 如果第一步mapper不直接算tf的话，emit term+docid，1的话，这个sum才有用处吧？ 如果已经计算了tf，直接value[0]. 因为term+docID 是唯一的
+        tf = value * math.log(#document/self.marginal)
+        yield term,docid,tf
+
+
+
+    JOBCONF = {
+        'mapreduce.map.output.key.field.separator': ',',
+        'mapreduce.partition.keypartitioner.options': '-k1,1', # partition by term
+        'partitioner': 'org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner',
+        'mapreduce.job.output.key.comparator.class': 'org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator',
+        'mapreduce.partition.keycomparator.options': '-k1,1 -k2,2n' # first sort by term,  secondary sort by docID numerically
+    }

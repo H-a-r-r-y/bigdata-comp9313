@@ -1,0 +1,39 @@
+class question1()
+
+    def mapper(_,line):
+        user_id = get_user_id(line)
+        locations = get_location(line)
+        for location in location:
+            emit ("location,user_id", "")
+
+
+     def reducer_init():
+        self.curr_loc = ""
+        self.curr_users = []
+
+
+     def reducer(key, value):
+       location,user = key.split(",")
+
+       if location != self.curr_loc:
+            if self.curr_loc != "":
+                emit (self.curr_loc, self.curr_users)
+            else:
+                self.curr_loc = location
+                self.curr_user.append(user)
+       else:
+            self.curr_user.append(user)
+
+      def reducer_final():
+        emit (self.curr_loc, self.curr_users)
+
+
+
+     conf = {
+        'mapreduce.map.output.key.field.separator': ',',
+        'mapreduce.partition.keypartitioner.options': '-k1,1',
+        'partitioner': 'org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner',
+        'mapreduce.job.output.key.comparator.class': 'org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator',
+        'mapreduce.partition.keycomparator.options': '-k1,1n -k2,2n'
+
+     }
